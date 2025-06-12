@@ -19,9 +19,9 @@ export default function Column({ status }) {
     >
       {" "}
       <h2 className="text-2xl font-extrabold text-white tracking-wide text-center mb-5 drop-shadow-lg animate-fadeIn">
-       {status === "To Do" && "📋 To Do"}{" "}
-        {status === "In Progress" && "📈 In Progress"}{" "}
-        {status === "Done" && "☑️ Done"}{" "}
+       {status === "To Do" && "📝 To Do"}{" "}
+        {status === "In Progress" && "🚧 In Progress"}{" "}
+        {status === "Done" && "✅ Done"}{" "}
       </h2>
      {" "}
       <Droppable droppableId={status}>
