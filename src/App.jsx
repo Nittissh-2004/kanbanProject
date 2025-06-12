@@ -19,11 +19,7 @@ export default function App() {
         </div>
          {/* Header */}{" "}
         <h1 className="text-5xl font-extrabold text-center text-white drop-shadow-lg tracking-wide z-10 relative animate-fade-in-down">
-<<<<<<< HEAD
              🌟 Kanban Task Board 🌟  {" "}
-=======
-             🌟Kanban Task Board🌟  {" "}
->>>>>>> 256a9420c99a8188f44f4a3cefa7ada1a31c221a
         </h1>
        {/* Glass Panel */}{" "}
         <div className="mt-10 px-4 py-6 bg-white/5 backdrop-blur-md border border-white/20 rounded-xl shadow-2xl z-10 relative">
