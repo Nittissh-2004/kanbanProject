@@ -1,33 +1,59 @@
 import React from "react";
 import TaskCard from "./TaskCard";
+import { useDroppable } from "@dnd-kit/core";
 
 export default function Column({ status, tasks }) {
-  const statusColors = {
-    "To Do": "from-purple-600 via-indigo-600 to-blue-600",
-    "In Progress": "from-yellow-500 via-orange-400 to-pink-500",
-     Done: "from-green-500 via-emerald-400 to-teal-500",
+  const { setNodeRef } = useDroppable({ id: status });
+
+  const priorityRank = { High: 1, Medium: 2, Low: 3 };
+
+  const sortedTasks = [...tasks].sort((a, b) => {
+    const prioA = priorityRank[a.priority] || 4;
+    const prioB = priorityRank[b.priority] || 4;
+
+    if (prioA !== prioB) {
+      return prioA - prioB;
+    }
+
+    const dateA = a.deadline ? new Date(a.deadline) : null;
+    const dateB = b.deadline ? new Date(b.deadline) : null;
+
+    if (!dateA) return 1;
+    if (!dateB) return -1;
+    return dateA - dateB;
+  });
+
+  const getTitleColor = () => {
+    switch (status) {
+      case "To Do":
+        return "bg-red-500";
+      case "In Progress":
+        return "bg-blue-500";
+      case "Done":
+        return "bg-green-500";
+      default:
+        return "bg-gray-600";
+    }
   };
 
   return (
-    <div
-      className={`rounded-2xl p-5 shadow-xl ring-1 ring-black/10 bg-gradient-to-br ${statusColors[status]} transform transition-all duration-300 hover:scale-[1.02]`}
-    ><h2 className="text-2xl font-extrabold text-white tracking-wide text-center mb-5 drop-shadow-lg animate-fadeIn">
-       {status === "To Do" && "📝 To Do"}
-        {status === "In Progress" && "🚧 In Progress"}
-        {status === "Done" && "✅ Done"}
+    <div className="flex-1 min-w-[300px]  ">
+      <h2
+        style={{ fontFamily: "Poppins,sans-serif" }}
+        className={`text-lg font-bold text-white mb-2 text-center py-2 rounded-t ${getTitleColor()}`}
+      >
+        {status}
       </h2>
-      <div className="space-y-4 min-h-[200px] transition-all">
-        {tasks.length === 0 ? (
-          <div className="text-center text-white/80 italic animate-pulse">
-            No tasks yet...
-          </div>
-        ) : (
-          tasks.map((task, index) => (
-            <TaskCard key={task.id} task={task} index={index} />
-          ))
-        )}
+      <div className="flex flex-col bg-white rounded-b p-2 pt-2 pb-2 h-[75vh]">
+        <div
+          className=" flex-grow overflow-y-auto space-y-2 scrollbar-hide "
+          ref={setNodeRef}
+        >
+          {sortedTasks.map((task) => (
+            <TaskCard key={task.id} task={task} status={status} />
+          ))}
         </div>
+      </div>
     </div>
   );
 }
-    

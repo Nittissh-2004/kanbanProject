@@ -1,170 +1,80 @@
 import React, { useState } from "react";
-import { useTask } from "../context/TaskContext";
-
+import { useTasks } from "../context/TaskContext";
+import { v4 as uuidv4 } from "uuid";
 
 export default function TaskForm() {
-  const {addTask } = useTask();
+  const { dispatch } = useTasks();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [showAddTask, setShowAddTask] = useState(false);
+  const [deadline, setDeadline] = useState("");
+  const [priority, setPriority] = useState("Medium");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!title.trim()) return;
-     addTask({
-    
-      title,
-      description,
-      status: "To Do",
+    if (!title || !description || !deadline) {
+      alert("Please Fill In All Fields");
+      return;
+    }
+    dispatch({
+      type: "ADD_TASK",
+      payload: {
+        id: uuidv4(),
+        title,
+        description,
+        deadline,
+        priority,
+        status: "To Do",
+      },
     });
     setTitle("");
     setDescription("");
-     setShowAddTask(false);
+    setDeadline("");
+    setPriority("Medium");
   };
 
   return (
     <>
-      <style>{`
-.creative-gradient-bg {
-          background: linear-gradient(135deg, #3b0764 0%, #1e3a8a 100%);
-          padding: 4rem 1rem;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          font-family: "Inter", sans-serif;
-        }
-
-        .add-task-card {
-          background: #ffffff;
-          border-radius: 1rem;
-          padding: 3rem;
-          max-width: 720px;
-          width: 100%;
-          box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.4), 0 12px 30px rgba(0, 0, 0, 0.2);
-          animation: fadeIn 1s ease;
-          transition: transform 0.3s ease;
-        }
-
-        .add-task-card:hover {
-          transform: scale(1.01);
-        }
-
-        h2 {
-          font-size: 2.5rem;
-          font-weight: 900;
-          color: #1e293b;
-          margin-bottom: 2rem;
-          text-align: center;
-        }
-
-        form label {
-          display: block;
-          margin-bottom: 0.5rem;
-          font-size: 1.125rem;
-          font-weight: 600;
-          color: #475569;
-        }
-
-        form input,
-        form textarea {
-          width: 100%;
-          padding: 1rem 1.25rem;
-          border-radius: 0.5rem;
-          border: 2px solid #e5e7eb;
-          font-size: 1rem;
-          margin-bottom: 1.5rem;
-          transition: border-color 0.3s ease;
-        }
-
-        form input:focus,
-        form textarea:focus {
-          border-color: #6366f1;
-          outline: none;
-        }
-
-        .submit-btn {
-          background: linear-gradient(to right, #6366f1, #7c3aed);
-          color: white;
-          font-weight: 700;
-          padding: 1rem 2.5rem;
-          border: none;
-          border-radius: 0.75rem;
-          font-size: 1.125rem;
-          cursor: pointer;
-          transition: background 0.3s ease, transform 0.2s ease;
-        }
-
-        .submit-btn:hover {
-          background: linear-gradient(to right, #4f46e5, #6d28d9);
-        }
-
-        .toggle-btn {
-          background-color: #ffffff;
-          color: #1e293b;
-          border: 2px solid #94a3b8;
-          font-weight: 600;
-          padding: 1rem 2rem;
-          border-radius: 0.75rem;
-          margin-bottom: 2rem;
-          cursor: pointer;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-          transition: all 0.3s ease;
-        }
-
-        .toggle-btn:hover {
-          background-color: #e0e7ff;
-          border-color: #6366f1;
-        }
-
-        @keyframes fadeIn {
-          from {
-            transform: translateY(-20px);
-            opacity: 0;
-          }
-          to {
-            transform: translateY(0);
-            opacity: 1;
-          }
-        }
-      `}</style>
-
-      <main className="creative-gradient-bg">
-     
-        <button
-          type="button"
-          className="toggle-btn"
-          onClick={() => setShowAddTask(!showAddTask)}
+      <form
+        onSubmit={handleSubmit}
+        className=" rounded-t  w-70 p-1 h-[75vh] overflow-y-auto scorllbar-hide   "
+      >
+        <div className="text-black ">
+          <input
+            className="w-full  block border rounded-md mt-1 px-3 py-2 border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 "
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Title"
+          />
+          <textarea
+            className="w-full  block border rounded-md mt-1 px-3 py-2 border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500  h-[48vh]"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Description"
+          />
+          <input
+            className="w-full  block border rounded-md mt-1 px-3 py-2 border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 "
+            type="date"
+            value={deadline}
+            onChange={(e) => setDeadline(e.target.value)}
+            placeholder="mm/dd/yyyy"
+          />
+        </div>
+        <select
+          className="w-full  block border rounded-md mt-1 px-3 py-2 text-black border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 "
+          value={priority}
+          onChange={(e) => setPriority(e.target.value)}
         >
-          {showAddTask ? "Close Task Form" : "➕ Add New Task"}
+          <option value="High">High</option>
+          <option value="Medium"> Medium</option>
+          <option value="Low">Low</option>
+        </select>
+        <button
+          className="bg-black text-white p-1 w-full mt-2 rounded font-bold hover:scale-95 transition "
+          type="submit"
+        >
+          Add
         </button>
-        {showAddTask && (
-          <section className="add-task-card" aria-label="Add new task">
-            <h2>✨ Add a New Task</h2>
-            <form onSubmit={handleSubmit}>
-              <label htmlFor="title">Task Title</label>
-              <input
-                id="title"
-                type="text"
-                placeholder="Enter task title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-              />
-              <label htmlFor="description">Description</label>
-              <textarea
-                id="description"
-                placeholder="Enter task description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                rows="4"
-              />
-              <button type="submit" className="submit-btn">
-                Add Task
-              </button>
-            </form>
-          </section>
-        )}
-      </main>
+      </form>
     </>
   );
 }

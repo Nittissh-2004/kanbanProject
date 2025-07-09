@@ -1,26 +1,21 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
+import React, { createContext, useContext, useReducer, useEffect } from "react";
+import { getLocalTasks, setLocalTasks } from "../utils/localstorage";
+import { taskReducer } from "../models/taskReducer";
 
 const TaskContext = createContext();
 
-const initialData = JSON.parse(localStorage.getItem("tasks")) || [];
-
-export const TaskProvider = ({ children }) => {
-  const [tasks, setTasks] = useState(initialData);
+export function TaskProvider({ children }) {
+  const [tasks, dispatch] = useReducer(taskReducer, getLocalTasks());
 
   useEffect(() => {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
+    setLocalTasks(tasks);
   }, [tasks]);
 
-  const addTask = (task) => {
-    const newTask = { ...task, id: uuidv4(), status: task.status || "To Do" };
-    setTasks((prev) => [...prev, newTask]);
-  };
-
   return (
-    <TaskContext.Provider value={{ tasks, setTasks, addTask }}>
+    <TaskContext.Provider value={{ tasks, dispatch }}>
       {children}
     </TaskContext.Provider>
   );
-};
-export const useTask = () => useContext(TaskContext);
+}
+
+export const useTasks = () => useContext(TaskContext);
